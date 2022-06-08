@@ -3,9 +3,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 window.onload = () => {
-  if ("serviceWorker" in navigator && document.URL.split(":")[0] !== "file") {
-    navigator.serviceWorker.register("./sw.js?2");
-  }
+  /*if ("serviceWorker" in navigator && document.URL.split(":")[0] !== "file") {
+    navigator.serviceWorker.register("./sw.js");
+  }*/
   loadedPage();
 }
 
@@ -163,7 +163,7 @@ const events = {
 
 let schedule = [];
 
-for (let i in events) {
+for (let id in events) {
   event = createScheduleEvent(id);
   schedule.push(event);
 }
