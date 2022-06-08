@@ -1,4 +1,4 @@
-let cacheName = "dl22.github.io"
+let cacheName = "gigosaurus.github.io"
 let filesToCache = [
   "./",
   "./index.html"
