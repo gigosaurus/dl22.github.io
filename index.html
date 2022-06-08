@@ -1,0 +1,374 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+window.onload = () => {
+  if ("serviceWorker" in navigator && document.URL.split(":")[0] !== "file") {
+    navigator.serviceWorker.register("./sw.js?2");
+  }
+  loadedPage();
+}
+
+const stages = {
+  1: "The Doghouse",
+  2: "Main Stage",
+  3: "Zippo Encore",
+  4: "Avalanche Stage",
+  5: "Dogtooth Stage"
+};
+
+const days = {
+  1: {date: "2022-06-08", day: "Wednesday"},
+  2: {date: "2022-06-09", day: "Thursday"},
+  3: {date: "2022-06-10", day: "Friday"},
+  4: {date: "2022-06-11", day: "Saturday"},
+  5: {date: "2022-06-12", day: "Sunday"}
+};
+
+const events = {
+	1: {stage: 1, day: 1, start: "15:00", end: "16:00", band: "Alyx Holcombe"},
+	2: {stage: 1, day: 1, start: "16:00", end: "16:25", band: "Defences"},
+	3: {stage: 1, day: 1, start: "16:45", end: "17:10", band: "Sertraline"},
+	4: {stage: 1, day: 1, start: "17:30", end: "17:55", band: "Veridian"},
+	5: {stage: 1, day: 1, start: "18:15", end: "18:45", band: "Fury"},
+	6: {stage: 1, day: 1, start: "19:10", end: "19:40", band: "Borders"},
+	7: {stage: 1, day: 1, start: "20:00", end: "20:35", band: "Seething Akira"},
+	8: {stage: 1, day: 1, start: "21:00", end: "21:50", band: "Red Method"},
+	9: {stage: 1, day: 1, start: "22:00", end: "03:00", band: "Alternative Anthems", night: true},
+	10: {stage: 1, day: 2, start: "12:55", end: "14:00", band: "Alyx Holcombe"},
+	11: {stage: 1, day: 2, start: "14:00", end: "15:30", band: "Famous Last Words"},
+	12: {stage: 1, day: 2, start: "16:00", end: "17:50", band: "Panic! At the Bingo"},
+	13: {stage: 1, day: 2, start: "18:00", end: "18:50", band: "Sappenin' (Podcast)"},
+	14: {stage: 1, day: 2, start: "19:00", end: "19:50", band: "On Weds We Wear Black"},
+	15: {stage: 1, day: 2, start: "20:30", end: "21:30", band: "Punk Rock Factory"},
+	16: {stage: 1, day: 2, start: "22:00", end: "23:30", band: "Download Team"},
+	17: {stage: 1, day: 2, start: "23:30", end: "00:30", band: "Sappenin' (DJ Set)", night: true},
+	18: {stage: 2, day: 3, start: "13:00", end: "13:25", band: "Wayward Sons"},
+	19: {stage: 2, day: 3, start: "13:55", end: "14:20", band: "Theory"},
+	20: {stage: 2, day: 3, start: "14:50", end: "15:25", band: "Bury Tomorrow"},
+	21: {stage: 2, day: 3, start: "15:55", end: "16:40", band: "Black Veil Brides"},
+	22: {stage: 2, day: 3, start: "17:10", end: "18:10", band: "Skindred"},
+	23: {stage: 2, day: 3, start: "18:40", end: "19:50", band: "A Day To Remember"},
+	24: {stage: 2, day: 3, start: "20:50", end: "22:50", band: "Kiss"},
+	25: {stage: 3, day: 3, start: "13:00", end: "13:25", band: "Ayron Jones"},
+	26: {stage: 3, day: 3, start: "13:50", end: "14:20", band: "Skynd"},
+	27: {stage: 3, day: 3, start: "14:45", end: "15:25", band: "Kris Barras Band"},
+	28: {stage: 3, day: 3, start: "15:50", end: "16:30", band: "Myles Kennedy & Company"},
+	29: {stage: 3, day: 3, start: "17:00", end: "17:45", band: "Lacuna Coil"},
+	30: {stage: 3, day: 3, start: "18:15", end: "19:05", band: "Airbourne"},
+	31: {stage: 3, day: 3, start: "19:35", end: "20:50", band: "Frank Carter and the Rattlesnakes"},
+	32: {stage: 4, day: 3, start: "13:00", end: "13:25", band: "Press Club"},
+	33: {stage: 4, day: 3, start: "13:50", end: "14:20", band: "Pengshui"},
+	34: {stage: 4, day: 3, start: "14:45", end: "15:15", band: "As Everything Unfolds"},
+	35: {stage: 4, day: 3, start: "15:40", end: "16:10", band: "Kid Brunswick"},
+	36: {stage: 4, day: 3, start: "16:35", end: "17:10", band: "Meet Me @ The Altar"},
+	37: {stage: 4, day: 3, start: "17:40", end: "18:20", band: "Normandie"},
+	38: {stage: 4, day: 3, start: "18:50", end: "19:35", band: "Sleep Token"},
+	39: {stage: 4, day: 3, start: "20:10", end: "21:10", band: "The Ghost Inside"},
+	40: {stage: 5, day: 3, start: "13:00", end: "13:25", band: "Heriot"},
+	41: {stage: 5, day: 3, start: "13:50", end: "14:15", band: "The Scratch"},
+	42: {stage: 5, day: 3, start: "14:40", end: "15:05", band: "Cellar Door Moon Crew"},
+	43: {stage: 5, day: 3, start: "15:30", end: "15:55", band: "Dead Poet Society"},
+	44: {stage: 5, day: 3, start: "16:20", end: "16:45", band: "A.A. Williams"},
+	45: {stage: 5, day: 3, start: "17:10", end: "17:35", band: "Tempt"},
+	46: {stage: 5, day: 3, start: "18:00", end: "18:25", band: "Bokassa"},
+	47: {stage: 5, day: 3, start: "18:50", end: "19:30", band: "British Lion"},
+	48: {stage: 5, day: 3, start: "20:00", end: "20:25", band: "Red Fang"},
+	49: {stage: 5, day: 3, start: "20:50", end: "21:20", band: "Blues Pills"},
+	50: {stage: 5, day: 3, start: "21:45", end: "22:30", band: "Electric Wizard"},
+	51: {stage: 1, day: 3, start: "22:00", end: "23:00", band: "Black Parade"},
+	52: {stage: 1, day: 3, start: "23:00", end: "00:30", band: "On Weds We Wear Black (DJ Set)", night: true},
+	53: {stage: 1, day: 3, start: "00:30", end: "03:00", band: "Facedown", night: true},
+	54: {stage: 2, day: 4, start: "11:00", end: "11:40", band: "The Raven Age"},
+	55: {stage: 2, day: 4, start: "12:15", end: "13:00", band: "Those Damn Crows"},
+	56: {stage: 2, day: 4, start: "13:35", end: "14:25", band: "Monster Truck"},
+	57: {stage: 2, day: 4, start: "15:00", end: "16:00", band: "Black Label Society"},
+	58: {stage: 2, day: 4, start: "16:35", end: "17:35", band: "Shinedown"},
+	59: {stage: 2, day: 4, start: "18:10", end: "19:30", band: "Deftones"},
+	60: {stage: 2, day: 4, start: "20:55", end: "22:55", band: "Iron Maiden"},
+	61: {stage: 3, day: 4, start: "11:15", end: "11:45", band: "Dirty Honey"},
+	62: {stage: 3, day: 4, start: "12:15", end: "12:50", band: "Cassyette"},
+	63: {stage: 3, day: 4, start: "13:20", end: "14:00", band: "Malevolence"},
+	64: {stage: 3, day: 4, start: "14:30", end: "15:10", band: "Ice Nine Kills"},
+	65: {stage: 3, day: 4, start: "15:40", end: "16:20", band: "Bush"},
+	66: {stage: 3, day: 4, start: "16:50", end: "17:30", band: "Daughtry"},
+	67: {stage: 3, day: 4, start: "18:05", end: "18:55", band: "Mastodon"},
+	68: {stage: 3, day: 4, start: "19:30", end: "20:45", band: "Megadeth"},
+	69: {stage: 4, day: 4, start: "11:00", end: "11:25", band: "Aniimalia"},
+	70: {stage: 4, day: 4, start: "11:50", end: "12:20", band: "Blackout Problems"},
+	71: {stage: 4, day: 4, start: "12:45", end: "13:15", band: "Salem"},
+	72: {stage: 4, day: 4, start: "13:40", end: "14:10", band: "Dragged Under"},
+	73: {stage: 4, day: 4, start: "14:35", end: "15:05", band: "Loathe"},
+	74: {stage: 4, day: 4, start: "15:30", end: "16:00", band: "Holding Absence"},
+	75: {stage: 4, day: 4, start: "16:25", end: "16:55", band: "grandson"},
+	76: {stage: 4, day: 4, start: "17:20", end: "18:00", band: "The Faim"},
+	77: {stage: 4, day: 4, start: "18:30", end: "19:10", band: "Creeper"},
+	78: {stage: 4, day: 4, start: "19:40", end: "20:40", band: "Funeral For a Friend"},
+	79: {stage: 5, day: 4, start: "11:00", end: "11:20", band: "Temples On Mars"},
+	80: {stage: 5, day: 4, start: "11:45", end: "12:10", band: "Death Blooms"},
+	81: {stage: 5, day: 4, start: "12:35", end: "13:00", band: "Dead Label"},
+	82: {stage: 5, day: 4, start: "13:25", end: "13:50", band: "Banks Arcade"},
+	83: {stage: 5, day: 4, start: "14:15", end: "14:40", band: "Dana Dentata"},
+	84: {stage: 5, day: 4, start: "15:05", end: "15:30", band: "Higher Power"},
+	85: {stage: 5, day: 4, start: "15:55", end: "16:20", band: "Will Haven"},
+	86: {stage: 5, day: 4, start: "16:45", end: "17:10", band: "Venom Prison"},
+	87: {stage: 5, day: 4, start: "17:35", end: "18:00", band: "Bleed From Within"},
+	88: {stage: 5, day: 4, start: "18:25", end: "18:50", band: "Dying Fetus"},
+	89: {stage: 5, day: 4, start: "19:15", end: "19:45", band: "Napalm Death"},
+	90: {stage: 5, day: 4, start: "20:15", end: "20:55", band: "Sepultura"},
+	91: {stage: 1, day: 4, start: "22:00", end: "23:30", band: "Chop Suey"},
+	92: {stage: 1, day: 4, start: "23:30", end: "00:30", band: "Daniel P Carter", night: true},
+	93: {stage: 1, day: 4, start: "00:30", end: "02:00", band: "What's My Age Again?", night: true},
+	94: {stage: 2, day: 5, start: "11:00", end: "11:45", band: "Wargasm"},
+	95: {stage: 2, day: 5, start: "12:20", end: "13:10", band: "Powerwolf"},
+	96: {stage: 2, day: 5, start: "13:45", end: "14:40", band: "Alestorm"},
+	97: {stage: 2, day: 5, start: "15:15", end: "16:15", band: "Rise Against"},
+	98: {stage: 2, day: 5, start: "16:50", end: "17:50", band: "Volbeat"},
+	99: {stage: 2, day: 5, start: "18:30", end: "19:40", band: "KoRn"},
+	100: {stage: 2, day: 5, start: "21:10", end: "22:50", band: "Biffy Clyro"},
+	101: {stage: 3, day: 5, start: "11:15", end: "11:50", band: "Control the Storm"},
+	102: {stage: 3, day: 5, start: "12:20", end: "12:55", band: "The Last Internationale"},
+	103: {stage: 3, day: 5, start: "13:25", end: "14:05", band: "Massive Wagons"},
+	104: {stage: 3, day: 5, start: "14:35", end: "15:20", band: "Tremonti"},
+	105: {stage: 3, day: 5, start: "15:55", end: "16:40", band: "Baroness"},
+	106: {stage: 3, day: 5, start: "17:15", end: "18:00", band: "Skillet"},
+	107: {stage: 3, day: 5, start: "18:35", end: "19:25", band: "The Darkness"},
+	108: {stage: 3, day: 5, start: "20:00", end: "21:10", band: "Steel Panther"},
+	109: {stage: 4, day: 5, start: "11:00", end: "11:25", band: "Static Dress"},
+	110: {stage: 4, day: 5, start: "11:50", end: "12:20", band: "Dead Posey"},
+	111: {stage: 4, day: 5, start: "12:50", end: "13:20", band: "Cemetery Sun"},
+	112: {stage: 4, day: 5, start: "13:50", end: "14:20", band: "The Hara"},
+	113: {stage: 4, day: 5, start: "14:50", end: "15:20", band: "Jamie Lenman"},
+	114: {stage: 4, day: 5, start: "15:50", end: "16:20", band: "Marianas Trench"},
+	115: {stage: 4, day: 5, start: "16:50", end: "17:20", band: "Spiritbox"},
+	116: {stage: 4, day: 5, start: "17:50", end: "18:30", band: "Trash Boat"},
+	117: {stage: 4, day: 5, start: "19:00", end: "19:40", band: "Boston Manor"},
+	118: {stage: 4, day: 5, start: "20:10", end: "21:10", band: "Descendents"},
+	119: {stage: 5, day: 5, start: "11:00", end: "11:25", band: "The Injester"},
+	120: {stage: 5, day: 5, start: "11:50", end: "12:15", band: "The Velveteers"},
+	121: {stage: 5, day: 5, start: "12:40", end: "13:05", band: "Anchor Lane"},
+	122: {stage: 5, day: 5, start: "13:30", end: "14:00", band: "Bimini"},
+	123: {stage: 5, day: 5, start: "14:25", end: "14:55", band: "Phoxjaw"},
+	124: {stage: 5, day: 5, start: "15:20", end: "15:50", band: "Modern Error"},
+	125: {stage: 5, day: 5, start: "16:15", end: "16:45", band: "Kill The Lights"},
+	126: {stage: 5, day: 5, start: "17:20", end: "17:50", band: "Orbit Culture"},
+	127: {stage: 5, day: 5, start: "18:15", end: "18:45", band: "Fire From The Gods"},
+	128: {stage: 5, day: 5, start: "19:10", end: "19:40", band: "Twin Temple"},
+	129: {stage: 5, day: 5, start: "20:10", end: "20:40", band: "Yonaka"},
+	130: {stage: 5, day: 5, start: "21:10", end: "21:55", band: "Myles Kennedy"},
+	131: {stage: 1, day: 5, start: "22:00", end: "23:30", band: "Lais MW & Lauren Cornelius"},
+	132: {stage: 1, day: 5, start: "23:30", end: "01:30", band: "Uprawr", night: true},
+	133: {stage: 1, day: 5, start: "01:30", end: "03:30", band: "Ultimate Power", night: true}
+};
+
+let schedule = [];
+
+for (let i in events) {
+  event = createScheduleEvent(id);
+  schedule.push(event);
+}
+
+schedule = schedule.sort(function (a, b) {return a.startTime == b.startTime ? 0 : (a.startTime < b.startTime ? -1 : 1);});
+
+function createScheduleEvent(id) {
+  let event = {
+    id: id,
+    band: events[id].band,
+    stage: stages[events[id].stage],
+    day: events[id].day,
+    startDate: new Date(days[events[id].day].date + "T" + events[id].start + "+01:00"),
+    endDate: new Date(days[events[id].day].date + "T" + events[id].end + "+01:00")
+  };
+  if (events[id].hasOwnProperty('night') && events[id].night) {
+    if (events[id].start < "07:00") {
+        event.startDate.setTime(event.startDate.getTime() + 86400000);
+    }
+    if (events[id].end < "07:00") {
+        event.endDate.setTime(event.endDate.getTime() + 86400000);
+    }
+  }
+  event.dayString = days[events[id].day].day;
+  event.startString = event.startDate.toLocaleTimeString(navigator.language, {hour: '2-digit', minute: '2-digit'});
+  event.endString = event.endDate.toLocaleTimeString(navigator.language, {hour: '2-digit', minute: '2-digit'});
+  event.startTime = event.startDate.getTime();
+  event.endTime = event.endDate.getTime();
+  return event;
+}
+
+function loadedPage() {
+  let now = (new Date()).getTime();
+  let lastDay = -1;
+  for (let event of schedule) {
+    if (event.startTime + 10800000 >= now) {
+      let started = event.startTime < now;
+      let ended = event.endTime < now;
+      if (event.day != lastDay) {
+        addDayBreak(event.dayString, started, ended);
+      }
+      addEvent(event, started, ended);
+    } 
+    lastDay = event.day;
+  }
+}
+
+function addDayBreak(day, started, ended) {
+  let item = document.createElement('li');
+  let h = document.createElement('h1');
+  h.innerText = day;
+  item.appendChild(h);
+  item.classList.add('day-break');
+  if (started) {
+    item.classList.add('in-past');
+  }
+  document.getElementById('events').appendChild(item);
+}
+
+function addEvent(event, started, ended) {
+  let item = document.createElement('div');
+  let time = document.createElement('span');
+  time.innerText = event.startString + " - " + event.endString;
+  item.appendChild(time);
+  let content = document.createElement('div');
+  content.classList.add('content');
+  let band = document.createElement('h3');
+  band.innerText = event.band;
+  content.appendChild(band);
+  let stage = document.createElement('p');
+  stage.innerText = event.stage;
+  content.appendChild(stage);
+  item.appendChild(content);
+
+  let li = document.createElement('li');
+  if (ended) {
+    li.classList.add('in-past');
+  } else if (started) {
+    li.classList.add('in-progress');
+  }
+  li.appendChild(item);
+  document.getElementById('events').appendChild(li);
+}
+
+</script>
+<style>
+*, html,body {
+  padding:0px;
+  margin:0px;
+  box-sizing:border-box;
+  font-family:sans-serif;
+}
+body {
+  background-color:#072736;
+  display:flex;
+  align-items:center;
+}
+.timeline {
+  color:#fff;
+  padding:30px 30px 30px 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.timeline ul {
+  list-style-type:none;
+  padding:10px 5px;
+}
+.timeline ul li {
+  padding:20px 20px;
+  position:relative;
+  transition:.5s;
+  border-left:2px solid #094a68;
+}
+.timeline ul li.in-past {
+  border-left:2px solid #063544;
+}
+.timeline ul li div span {
+  display:inline-block;
+  background-color:#1685b8;
+  border-radius:25px;
+  padding:2px 5px;
+  font-size:15px;
+  text-align:center;
+}
+.timeline ul li.in-past span {
+  background-color:#485358;
+}
+.timeline ul li.in-past .content h3 {
+  color:#5c6568;
+}
+.timeline ul li.in-past .content p {
+  color:#374042;
+}
+.timeline .content h3 {
+  color:#34ace0;
+  font-size:17px;
+  padding-top:5px;
+}
+.timeline .content p {
+  padding:5px 0px 0px 0px;
+  font-size:15px;
+}
+.timeline ul li:before {
+  position:absolute;
+  content:'';
+  width:10px;
+  height:10px;
+  background-color:#34ace0;
+  border-radius:50%;
+  left:-6px;
+  top:28px;
+}
+.timeline ul li.in-progress:before {
+  background-color:#0F0;
+  box-shadow:0px 0px 10px 2px #0F0;
+}
+.timeline ul li.in-past:before {
+  background-color:#454;
+}
+.timeline ul li.day-break:before {
+ content:none;
+}
+.timeline ul li:not(.in-past) div .content p.change-stage {
+  color:#ff6a00;
+}
+.timeline ul li:not(.in-past) div .content p.overlap {
+  color: #F00;
+}
+.timeline ul li:not(.in-past) div span.overlap {
+  background-color: #F00;
+}
+.timeline ul li:not(.in-past) div.favourite {
+  box-shadow: 0px 0px 10px 2px #0F0;
+  padding: 20px;
+}
+.timeline ul li:not(.in-past) div.interested {
+  box-shadow: 0px 0px 10px 2px #1485b8;
+  padding: 20px;
+}
+.timeline li.info span {
+  background-color: #485358;
+}
+.timeline li.info p {
+  display: inline-block;
+  color: #374042;
+  font-size: 8px;
+}
+.timeline li.info h3 {
+  display: inline-block;
+  padding: 0 5px 0 5px;
+  color: #5c6568;
+  font-size: 10px;
+}
+.timeline li.info:before {
+  background-color: #454;
+  top:16px;
+}
+.timeline li.info {
+  padding: 10px 20px;
+}
+</style>
+</head>
+<body>
+<div class="timeline">
+  <ul id="events"></ul>
+</div>
+</body>
+</html>
