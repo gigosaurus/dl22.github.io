@@ -170,6 +170,11 @@ for (let id in events) {
 
 schedule = schedule.sort(function (a, b) {return a.startTime == b.startTime ? 0 : (a.startTime < b.startTime ? -1 : 1);});
 
+setInterval(function() {
+  document.getElementById('events').innerHTML = '';
+  loadedPage();
+}, 1000 * 60);
+
 function createScheduleEvent(id) {
   let event = {
     id: id,
